@@ -1,0 +1,4 @@
+openai==1.16.2
+flask
+flask-cors
+llama-index=0.10.27
