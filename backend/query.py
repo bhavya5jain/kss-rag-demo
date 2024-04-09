@@ -8,6 +8,7 @@ from llama_index.core.storage import StorageContext
 import re
 from flask import Flask, request
 from flask_cors import CORS
+import ast
 
 
 app = Flask(__name__)
@@ -64,14 +65,14 @@ def assembler_instruction_description():
     query_engine = index.as_query_engine()
     response = query_engine.query(user_prompt)
 
-    res = json.loads(str(response).replace("'", '"'))
+    res = ast.literal_eval(str(response))
 
     if hasattr(response, 'metadata'):
         document_info = str(response.metadata)
-        find = re.findall(
-            r"'page_label': '[^']*', 'file_name': '[^']*'", document_info)
+        matches = re.findall(
+            r"'page_label': '(\d+-\d+)", document_info)
 
-        res["contextInformation"] = str(find)
+        res["contextInformation"] = matches
 
     return res
 
